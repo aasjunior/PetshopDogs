@@ -4,6 +4,7 @@ from tkinter import *
 from customtkinter import *
 from pymongo import MongoClient
 from re import *
+import  subprocess
 
 # Paleta de Cores -------------------------------------------------------------------------------------------------------
 
@@ -43,6 +44,18 @@ db = client['PetShop']
 # Armazena a coleção
 collection = db['Funcionarios']
 
+
+def limparCampos():
+    # Limpar os campos
+    txtNome.delete(0, END)
+    txtEmail.delete(0, END)
+    txtTelefone.delete(0, END)
+    txtSenha.delete(0, END)
+    txtConfirmarSenha.delete(0, END)
+
+    # Focar no Frame e não no último campo
+    formFieldset.focus()
+
 # Create
 def cadastrar():
 
@@ -57,15 +70,9 @@ def cadastrar():
             'senha': txtSenha.get()
         })
 
-        # Limpar os campos
-        txtNome.delete(0, END)
-        txtEmail.delete(0, END)
-        txtTelefone.delete(0, END)
-        txtSenha.delete(0, END)
-        txtConfirmarSenha.delete(0, END)
-
-        # Focar no Frame e não no último campo
-        formFieldset.focus()
+        tela.withdraw()
+        subprocess.run(['python', 'pagina_inicial.py'])
+        tela.destroy()
 
     else:
         msg.configure(text="E-mail inválido")
@@ -98,7 +105,6 @@ txtEmail = CTkEntry(formFieldset, placeholder_text="Seu E-mail", width=200)
 
 lblTelefone = CTkLabel(formFieldset, text="Telefone", font=("arial bold", 16))
 txtTelefone = CTkEntry(formFieldset, placeholder_text="(99) 99999-9999", width=200)
-
 
 lblSenha = CTkLabel(formFieldset, text="Senha", font=("arial bold", 16))
 txtSenha = CTkEntry(formFieldset, placeholder_text="Senha", width=200, show="*")

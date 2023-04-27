@@ -2,11 +2,13 @@
 
 from tkinter import *
 from customtkinter import *
+from pymongo import MongoClient
 import subprocess
 
 # Paleta de Cores -------------------------------------------------------------------------------------------------------
 
 from paleta_cores import *
+
 
 # Funções --------------------------------------------------------------------------------------------------------------
 
@@ -16,9 +18,24 @@ def registrarUsuario():
     tela.destroy()
 
 def logar():
-    tela.withdraw()
-    subprocess.run(['python', 'pagina_inicial.py'])
-    tela.destroy()
+    # Conexão com o banco de dados
+    client = MongoClient('localhost', 27017)
+
+    # Seleciona o banco de dados
+    db = client['PetShop']
+
+    # Armazena a coleção
+    collection = db['Funcionarios']
+
+    usuario = collection.find_one({'username': txtEmail.get(), 'password': txtSenha.get()})
+
+    if usuario:
+        tela.withdraw()
+        subprocess.run(['python', 'pagina_inicial.py'])
+        tela.destroy()
+    else:
+        msg.configure(text="Usuário ou senha inválida")
+        msg.pack()
 
 # Configuração de Tela --------------------------------------------------------------------------------------------------
 
@@ -44,6 +61,8 @@ txtSenha = CTkEntry(formFieldset, placeholder_text="Sua Senha", width=210)
 btnLogin = CTkButton(formBtns, text="Login", fg_color=green, width=100, command=lambda: logar())
 btnRegistrar = CTkButton(formBtns, text="Registrar", fg_color="transparent", border_width=2, border_color="gray", width=100, command=lambda: registrarUsuario())
 btnEsqueceuSenha = CTkLabel(formBtns, text="Esqueceu a Senha")
+
+msg = CTkLabel(formFieldset, text="", font=("ariel bold", 12))
 
 # Configurando os Widgets --------------------------------------------------------------------------------------------
 
