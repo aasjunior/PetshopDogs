@@ -44,7 +44,6 @@ db = client['PetShop']
 # Armazena a coleção
 collection = db['Funcionarios']
 
-
 def limparCampos():
     # Limpar os campos
     txtNome.delete(0, END)
@@ -56,29 +55,47 @@ def limparCampos():
     # Focar no Frame e não no último campo
     formFieldset.focus()
 
+def exibirMsg(msg):
+    lblMsg.configure(text=msg)
+    lblMsg.grid(row=12, columnspan=2)
+
+# Compara senha
+
+def confirmarSenha(*args):
+
+    # Permite alterar o valor da variavel definida no escopo global
+    global validaSenha
+
+    if varSenha.get() == varConfirmarSenha.get():
+        exibirMsg("")
+        return True
+    else:
+        exibirMsg("Senhas diferentes!")
+        return False
+
 # Create
 def cadastrar():
+    # Verificar se todos os campos estão preenchidos
+    if(len(txtNome.get()) > 0 and len(txtEmail.get()) > 0 and len(txtTelefone.get()) > 0 and len(txtSenha.get()) > 0 and len(txtConfirmarSenha.get()) > 0):
+        if confirmarSenha():
+            if validaEmail(txtEmail.get()):
+                # Cria um novo documento na coleção
+                collection.insert_one({
+                    'nome': txtNome.get(),
+                    'email': txtEmail.get(),
+                    'telefone': txtTelefone.get(),
+                    'senha': txtSenha.get()
+                })
 
-    email = txtEmail.get()
-
-    if validaEmail(email):
-        # Cria um novo documento na coleção
-        collection.insert_one({
-            'nome': txtNome.get(),
-            'email': txtEmail.get(),
-            'telefone': txtTelefone.get(),
-            'senha': txtSenha.get()
-        })
-
-        tela.withdraw()
-        subprocess.run(['python', 'pagina_inicial.py'])
-        tela.destroy()
-
+                tela.withdraw()
+                subprocess.run(['python', 'pagina_inicial.py'])
+                tela.destroy()
+            else:
+                exibirMsg("E-mail inválido|")
+                txtEmail.focus()
     else:
-        msg.configure(text="E-mail inválido")
-        msg.grid(row=12, columnspan=2)
-        txtEmail.focus()
-        txtEmail.configure(border_color="red")
+        exibirMsg("Preencha todos os campos!")
+
 
 # Configuração de Tela --------------------------------------------------------------------------------------------------
 
@@ -107,16 +124,24 @@ lblTelefone = CTkLabel(formFieldset, text="Telefone", font=("arial bold", 16))
 txtTelefone = CTkEntry(formFieldset, placeholder_text="(99) 99999-9999", width=200)
 
 lblSenha = CTkLabel(formFieldset, text="Senha", font=("arial bold", 16))
-txtSenha = CTkEntry(formFieldset, placeholder_text="Senha", width=200, show="*")
+varSenha = StringVar()
+txtSenha = CTkEntry(formFieldset, placeholder_text="Senha", width=200, show="*", textvariable=varSenha)
+
 
 lblConfirmarSenha = CTkLabel(formFieldset, text="Confirme a Senha", font=("arial bold", 16))
-txtConfirmarSenha = CTkEntry(formFieldset, placeholder_text="Confirmar Senha", width=200, show="*")
+varConfirmarSenha = StringVar()
+txtConfirmarSenha = CTkEntry(formFieldset, placeholder_text="Confirmar Senha", width=200, show="*", textvariable=varConfirmarSenha)
 
 btnCadastrar = CTkButton(formFieldset, text="Cadastrar", width=100, command=cadastrar)
 
-msg = CTkLabel(formFieldset, text="", font=("ariel bold", 16))
+lblMsg = CTkLabel(formFieldset, text="", font=("ariel bold", 16))
 
 # Configurando os Widgets ----------------------------------------------------------------------------------------------
+
+# Comparação de senhas
+
+varSenha.trace('w', confirmarSenha)
+varConfirmarSenha.trace('w', confirmarSenha)
 
 # Gerenciadores
 

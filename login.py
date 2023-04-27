@@ -56,7 +56,7 @@ formBtns = CTkFrame(formFieldset, fg_color="transparent")
 legend = CTkLabel(formFieldset, text="Fazer Login", font=("arial bold", 16))
 
 txtEmail = CTkEntry(formFieldset, placeholder_text="Seu E-mail", width=210)
-txtSenha = CTkEntry(formFieldset, placeholder_text="Sua Senha", width=210)
+txtSenha = CTkEntry(formFieldset, placeholder_text="Sua Senha", show='*', width=210)
 
 btnLogin = CTkButton(formBtns, text="Login", fg_color=green, width=100, command=lambda: logar())
 btnRegistrar = CTkButton(formBtns, text="Registrar", fg_color="transparent", border_width=2, border_color="gray", width=100, command=lambda: registrarUsuario())
