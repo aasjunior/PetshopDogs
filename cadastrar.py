@@ -55,14 +55,14 @@ def conn():
     # Armazena a coleção
     collection = db['Funcionarios']
 
-    usuario = collection.find_one({'email': txtEmail.get()})
+    usuario = collection.find_one({'email': txtEmail.get().lower()})
     if usuario:
         exibirMsg('E-mail já cadastrado!')
     else:
         # Cria um novo documento na coleção
         collection.insert_one({
             'nome': txtNome.get(),
-            'email': txtEmail.get(),
+            'email': txtEmail.get().lower(),
             'telefone': txtTelefone.get(),
             'senha': txtSenha.get()
         })
@@ -86,19 +86,21 @@ def exibirMsg(msg):
 def popup(msg):
     # Cria uma nova janela (toplevel)
     popup = CTkToplevel(tela)
-    popup.title("Alerta!")
-    popup.geometry("300x200")
-    popup.resizable(False, False)
+    popup.title("Mensagem")
 
     # Posiciona a janela no centro da tela
+    w = 280
+    h = 150
     ws = tela.winfo_screenwidth()
     hs = tela.winfo_screenheight()
-    x = (ws/2) - (300/2)
-    y = (hs/2) - (200/2)
-    popup.geometry(f"+{int(x)}+{int(y)}")
+    x = (ws/2) - (280/2)
+    y = (hs/2) - (150/2)
+    popup.geometry("%dx%d+%d+%d" % (w, h, x, y))
+    popup.resizable(False, False)
 
-    lblPopup = CTkLabel(popup, text=msg, font=("arial", 16)).place(relx=0.5, rely=0.5, anchor=CENTER)
-    btnOk = CTkButton(popup, text="Ok", command=lambda: abrirPaginaInicial(popup))
+    lblPopupTitle = CTkLabel(popup, text="Alerta!", font=("arial bold", 18)).pack(pady=(5,0))
+    lblPopupMsg = CTkLabel(popup, text=msg, font=("arial", 16)).place(relx=0.5, rely=0.5, anchor=CENTER)
+    btnOk = CTkButton(popup, text="Ok", width=50, command=lambda: abrirPaginaInicial(popup))
     btnOk.place(relx=1.0, rely=1.0, anchor='se', x=-10, y=-10)
 
     # Impede que o usuário interaja com a janela principal enquanto o popup estiver aberto
@@ -137,10 +139,10 @@ def cadastrar():
 
             elif validacao == [True, False]:
                 exibirMsg("Telefone inválido!")
-                txtEmail.focus()
+                txtTelefone.focus()
             elif validacao == [False, True]:
                 exibirMsg("E-mail inválido!")
-                txtTelefone.focus()
+                txtEmail.focus()
             else:
                 exibirMsg("E-mail e telefone inválidos!")
                 txtEmail.focus()

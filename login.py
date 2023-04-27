@@ -9,7 +9,6 @@ import subprocess
 
 from paleta_cores import *
 
-
 # Funções --------------------------------------------------------------------------------------------------------------
 
 def registrarUsuario():
@@ -27,7 +26,7 @@ def logar():
     # Armazena a coleção
     collection = db['Funcionarios']
 
-    usuario = collection.find_one({'email': txtEmail.get(), 'senha': txtSenha.get()})
+    usuario = collection.find_one({'email': txtEmail.get().lower(), 'senha': txtSenha.get()})
 
     if usuario:
         tela.withdraw()
