@@ -68,7 +68,10 @@ def cadastrar():
         formFieldset.focus()
 
     else:
-        print("email invalido")
+        msg.configure(text="E-mail inválido")
+        msg.grid(row=12, columnspan=2)
+        txtEmail.focus()
+        txtEmail.configure(border_color="red")
 
 # Configuração de Tela --------------------------------------------------------------------------------------------------
 
@@ -104,6 +107,8 @@ lblConfirmarSenha = CTkLabel(formFieldset, text="Confirme a Senha", font=("arial
 txtConfirmarSenha = CTkEntry(formFieldset, placeholder_text="Confirmar Senha", width=200, show="*")
 
 btnCadastrar = CTkButton(formFieldset, text="Cadastrar", width=100, command=cadastrar)
+
+msg = CTkLabel(formFieldset, text="", font=("ariel bold", 16))
 
 # Configurando os Widgets ----------------------------------------------------------------------------------------------
 
