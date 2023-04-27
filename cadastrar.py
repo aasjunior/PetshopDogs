@@ -22,27 +22,51 @@ from paleta_cores import *
 # # \ -> '\' caractere de escape utilizado para escapar o '.' que separa o dominio da extensão (o '.' tbm significa qualquer caractere, sendo necessário usar escape)
 # # [a-zA-Z]{2,} -> sequencia de dois ou mais (',') caracteres alfabéticos (letras maiusculas e minusculas)
 
-def validaEmail(email):
+def regex(email, telefone):
 
     # r' ' -> declaração de string literal (raw), sem processamento de caracteres especiais
     pattern_email = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+    pattern_telefone = r'^\d{9}$'
 
     # Verifica se o email inserido pelo usúario é válido
     if search(pattern_email, email):
-        return True
+        validaEmail = True
     else:
-        return False
+        validaEmail = False
+
+    if search(pattern_telefone, telefone):
+        validaTelefone = True
+    else:
+        validaTelefone = False
+
+    regex = [validaEmail, validaTelefone]
+
+    return regex
 
 # CRUD com MongoDB -----------------------------------------------------------------------------------------------------
 
-# Conexão com o banco de dados
-client = MongoClient('localhost', 27017)
+def conn():
+    # Conexão com o banco de dados
+    client = MongoClient('localhost', 27017)
 
-# Seleciona o banco de dados
-db = client['PetShop']
+    # Seleciona o banco de dados
+    db = client['PetShop']
 
-# Armazena a coleção
-collection = db['Funcionarios']
+    # Armazena a coleção
+    collection = db['Funcionarios']
+
+    usuario = collection.find_one({'email': txtEmail.get()})
+    if usuario:
+        exibirMsg('E-mail já cadastrado!')
+    else:
+        # Cria um novo documento na coleção
+        collection.insert_one({
+            'nome': txtNome.get(),
+            'email': txtEmail.get(),
+            'telefone': txtTelefone.get(),
+            'senha': txtSenha.get()
+        })
+        popup("Usuário cadastrado com sucesso!")
 
 def limparCampos():
     # Limpar os campos
@@ -58,6 +82,35 @@ def limparCampos():
 def exibirMsg(msg):
     lblMsg.configure(text=msg)
     lblMsg.grid(row=12, columnspan=2)
+
+def popup(msg):
+    # Cria uma nova janela (toplevel)
+    popup = CTkToplevel(tela)
+    popup.title("Alerta!")
+    popup.geometry("300x200")
+    popup.resizable(False, False)
+
+    # Posiciona a janela no centro da tela
+    ws = tela.winfo_screenwidth()
+    hs = tela.winfo_screenheight()
+    x = (ws/2) - (300/2)
+    y = (hs/2) - (200/2)
+    popup.geometry(f"+{int(x)}+{int(y)}")
+
+    lblPopup = CTkLabel(popup, text=msg, font=("arial", 16)).place(relx=0.5, rely=0.5, anchor=CENTER)
+    btnOk = CTkButton(popup, text="Ok", command=lambda: abrirPaginaInicial(popup))
+    btnOk.place(relx=1.0, rely=1.0, anchor='se', x=-10, y=-10)
+
+    # Impede que o usuário interaja com a janela principal enquanto o popup estiver aberto
+    popup.grab_set()
+    popup.mainloop()
+
+def abrirPaginaInicial(popup):
+    tela.withdraw()
+    popup.withdraw()
+    subprocess.run(['python', 'pagina_inicial.py'])
+    popup.destroy()
+    tela.destroy()
 
 # Compara senha
 
@@ -76,23 +129,22 @@ def confirmarSenha(*args):
 # Create
 def cadastrar():
     # Verificar se todos os campos estão preenchidos
-    if(len(txtNome.get()) > 0 and len(txtEmail.get()) > 0 and len(txtTelefone.get()) > 0 and len(txtSenha.get()) > 0 and len(txtConfirmarSenha.get()) > 0):
+    if(len(txtNome.get()) > 0 and len(txtEmail.get()) > 0 and len(txtTelefone.get()) > 0 and len(txtSenha.get()) > 0 and len(txtConfirmarSenha.get()) > 0 and txtSenha.get() != "*****" and txtSenha.get() != "*****"):
         if confirmarSenha():
-            if validaEmail(txtEmail.get()):
-                # Cria um novo documento na coleção
-                collection.insert_one({
-                    'nome': txtNome.get(),
-                    'email': txtEmail.get(),
-                    'telefone': txtTelefone.get(),
-                    'senha': txtSenha.get()
-                })
+            validacao = regex(txtEmail.get(), txtTelefone.get())
+            if validacao == [True, True]:
+                conn()
 
-                tela.withdraw()
-                subprocess.run(['python', 'pagina_inicial.py'])
-                tela.destroy()
-            else:
-                exibirMsg("E-mail inválido|")
+            elif validacao == [True, False]:
+                exibirMsg("Telefone inválido!")
                 txtEmail.focus()
+            elif validacao == [False, True]:
+                exibirMsg("E-mail inválido!")
+                txtTelefone.focus()
+            else:
+                exibirMsg("E-mail e telefone inválidos!")
+                txtEmail.focus()
+                txtTelefone.focus()
     else:
         exibirMsg("Preencha todos os campos!")
 
@@ -101,7 +153,15 @@ def cadastrar():
 
 tela = CTk()
 tela.title("Petshop Dog's - Cadastro")
-tela.geometry("800x500")
+
+largura = 800
+altura = 500
+largura_screen = tela.winfo_screenwidth()
+altura_screen = tela.winfo_screenheight()
+posx = largura_screen/2 - largura/2
+posy = altura_screen/2 - altura/2
+
+tela.geometry("%dx%d+%d+%d" % (largura, altura, posx, posy))
 tela.resizable(False, False)
 
 tela._set_appearance_mode("dark")
@@ -121,16 +181,15 @@ lblEmail = CTkLabel(formFieldset, text="Seu E-mail", font=("arial bold", 16))
 txtEmail = CTkEntry(formFieldset, placeholder_text="Seu E-mail", width=200)
 
 lblTelefone = CTkLabel(formFieldset, text="Telefone", font=("arial bold", 16))
-txtTelefone = CTkEntry(formFieldset, placeholder_text="(99) 99999-9999", width=200)
+txtTelefone = CTkEntry(formFieldset, placeholder_text="Telefone", width=200)
 
 lblSenha = CTkLabel(formFieldset, text="Senha", font=("arial bold", 16))
 varSenha = StringVar()
-txtSenha = CTkEntry(formFieldset, placeholder_text="Senha", width=200, show="*", textvariable=varSenha)
-
+txtSenha = CTkEntry(formFieldset, width=200, show="*", textvariable=varSenha)
 
 lblConfirmarSenha = CTkLabel(formFieldset, text="Confirme a Senha", font=("arial bold", 16))
 varConfirmarSenha = StringVar()
-txtConfirmarSenha = CTkEntry(formFieldset, placeholder_text="Confirmar Senha", width=200, show="*", textvariable=varConfirmarSenha)
+txtConfirmarSenha = CTkEntry(formFieldset, width=200, show="*", textvariable=varConfirmarSenha)
 
 btnCadastrar = CTkButton(formFieldset, text="Cadastrar", width=100, command=cadastrar)
 

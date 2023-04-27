@@ -17,7 +17,15 @@ def sair():
 
 tela = CTk()
 tela.title("Petshop Dog's - Pagina Inicial")
-tela.geometry("1000x600")
+
+largura = 1000
+altura = 600
+largura_screen = tela.winfo_screenwidth()
+altura_screen = tela.winfo_screenheight()
+posx = largura_screen/2 - largura/2
+posy = altura_screen/2 - altura/2
+
+tela.geometry("%dx%d+%d+%d" % (largura, altura, posx, posy))
 tela.resizable(False, False)
 
 tela._set_appearance_mode("dark")
