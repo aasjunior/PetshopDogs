@@ -21,7 +21,7 @@ tela.geometry("1000x600")
 tela.resizable(False, False)
 
 tela._set_appearance_mode("dark")
-set_default_color_theme("blue")
+set_default_color_theme("green")
 
 # Importando imagens -------------------------------------------------------------------------------------------------
 bg_welcome = Image.open("imgs/undraw_welcome_cats_thqn.png")

@@ -2,10 +2,23 @@
 
 from tkinter import *
 from customtkinter import *
+import subprocess
 
 # Paleta de Cores -------------------------------------------------------------------------------------------------------
 
 from paleta_cores import *
+
+# Funções --------------------------------------------------------------------------------------------------------------
+
+def registrarUsuario():
+    tela.withdraw()
+    subprocess.run(['python', 'cadastrar.py'])
+    tela.destroy()
+
+def logar():
+    tela.withdraw()
+    subprocess.run(['python', 'pagina_inicial.py'])
+    tela.destroy()
 
 # Configuração de Tela --------------------------------------------------------------------------------------------------
 
@@ -28,8 +41,8 @@ legend = CTkLabel(formFieldset, text="Fazer Login", font=("arial bold", 16))
 txtEmail = CTkEntry(formFieldset, placeholder_text="Seu E-mail", width=210)
 txtSenha = CTkEntry(formFieldset, placeholder_text="Sua Senha", width=210)
 
-btnLogin = CTkButton(formBtns, text="Login", fg_color=green, width=100)
-btnRegistrar = CTkButton(formBtns, text="Registrar", fg_color="transparent", border_width=2, border_color="gray", width=100)
+btnLogin = CTkButton(formBtns, text="Login", fg_color=green, width=100, command=lambda: logar())
+btnRegistrar = CTkButton(formBtns, text="Registrar", fg_color="transparent", border_width=2, border_color="gray", width=100, command=lambda: registrarUsuario())
 btnEsqueceuSenha = CTkLabel(formBtns, text="Esqueceu a Senha")
 
 # Configurando os Widgets --------------------------------------------------------------------------------------------
