@@ -5,6 +5,8 @@ from customtkinter import *
 from pymongo import MongoClient
 from re import *
 import  subprocess
+from passlib.hash import pbkdf2_sha256 as cryp
+import bcrypt
 
 # Paleta de Cores -------------------------------------------------------------------------------------------------------
 
@@ -59,12 +61,15 @@ def conn():
     if usuario:
         exibirMsg('E-mail já cadastrado!')
     else:
+        senha = cryp.hash(txtSenha.get(), salt_size=16)
+        hashed = bcrypt.hashpw(senha.encode('utf8'), bcrypt.gensalt())
         # Cria um novo documento na coleção
         collection.insert_one({
             'nome': txtNome.get(),
             'email': txtEmail.get().lower(),
             'telefone': txtTelefone.get(),
-            'senha': txtSenha.get()
+            #'senha': cryp.hash(txtSenha.get(), rounds=200000, salt_size=16)
+            'senha': hashed
         })
         popup("Usuário cadastrado com sucesso!")
 

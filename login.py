@@ -4,6 +4,8 @@ from tkinter import *
 from customtkinter import *
 from pymongo import MongoClient
 import subprocess
+from passlib.hash import pbkdf2_sha256 as cryp
+from bcrypt import *
 
 # Paleta de Cores -------------------------------------------------------------------------------------------------------
 
@@ -26,14 +28,17 @@ def logar():
     # Armazena a coleção
     collection = db['Funcionarios']
 
-    usuario = collection.find_one({'email': txtEmail.get().lower(), 'senha': txtSenha.get()})
+    #senha = cryp.hash(txtSenha.get(), rounds=200000, salt_size=16)
+    senha = cryp.hash(txtSenha.get(), salt_size=16)
+    hashed = hashpw(senha.encode('utf8'), gensalt())
+    usuario = collection.find_one({'email': txtEmail.get().lower(), 'senha': hashed})
 
     if usuario:
         tela.withdraw()
         subprocess.run(['python', 'pagina_inicial.py'])
         tela.destroy()
     else:
-        msg.configure(text="Usuário ou senha inválida")
+        msg.configure(text=f"Usuário ou senha inválida {hashed}")
         msg.pack()
 
 # Configuração de Tela --------------------------------------------------------------------------------------------------
