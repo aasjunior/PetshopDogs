@@ -2,7 +2,7 @@
 
 from tkinter import *
 from customtkinter import *
-from pymongo import MongoClient
+import mysql.connector as mysql
 import subprocess
 
 # Paleta de Cores -------------------------------------------------------------------------------------------------------
@@ -10,6 +10,15 @@ import subprocess
 from paleta_cores import *
 
 # Funções --------------------------------------------------------------------------------------------------------------
+def conectar():
+    # Conexão com o banco de dados
+    connection = mysql.connect(
+        host='localhost',
+        user='root',
+        password='',
+        database='PetShop'
+    )
+    return connection
 
 def registrarUsuario():
     tela.withdraw()
@@ -17,25 +26,29 @@ def registrarUsuario():
     tela.destroy()
 
 def logar():
-    # Conexão com o banco de dados
-    client = MongoClient('localhost', 27017)
+    connection = conectar()
+    cursor = connection.cursor()
 
-    # Seleciona o banco de dados
-    db = client['PetShop']
+    email = txtEmail.get()
+    senha = txtSenha.get()
 
-    # Armazena a coleção
-    collection = db['Funcionarios']
-
-    usuario = collection.find_one({'email': txtEmail.get().lower(), 'senha': txtSenha.get()})
+    # Verificar se o usuário existe no banco de dados
+    query = "SELECT * FROM Funcionarios WHERE email = %s AND senha = %s"
+    values = (email, senha)
+    cursor.execute(query, values)
+    usuario = cursor.fetchone()
 
     if usuario:
+        id = usuario[0]
         tela.withdraw()
-        subprocess.run(['python', 'pagina_inicial.py'])
+        subprocess.run(['python', 'pagina_inicial.py', str(id)])
         tela.destroy()
     else:
-        msg.configure(text="Usuário ou senha inválida")
+        msg.configure(text="Usuário ou senha inválidos")
         msg.pack()
 
+    cursor.close()
+    connection.close()
 # Configuração de Tela --------------------------------------------------------------------------------------------------
 
 tela = CTk()

@@ -1,10 +1,10 @@
-# Importação de Bibliotecas ---------------------------------------------------------------------------------------------
-
 from tkinter import *
+from tkinter.filedialog import askopenfilename
 from customtkinter import *
-from pymongo import MongoClient
-from re import *
-import  subprocess
+import mysql.connector
+import subprocess
+from re import search
+
 
 # Paleta de Cores -------------------------------------------------------------------------------------------------------
 
@@ -43,30 +43,40 @@ def regex(email, telefone):
 
     return regex
 
-# CRUD com MongoDB -----------------------------------------------------------------------------------------------------
+# CRUD com MySQL -------------------------------------------------------------------------------------------------------
 
 def conn():
     # Conexão com o banco de dados
-    client = MongoClient('localhost', 27017)
+    mydb = mysql.connector.connect(
+        host="localhost",
+        user="root",
+        password="",
+        database="PetShop"
+    )
 
-    # Seleciona o banco de dados
-    db = client['PetShop']
+    # Criação de cursor
+    cursor = mydb.cursor()
 
-    # Armazena a coleção
-    collection = db['Funcionarios']
+    # Verificar se o email já está cadastrado
+    cursor.execute("SELECT * FROM Funcionarios WHERE email = %s", (txtEmail.get().lower(),))
+    usuario = cursor.fetchone()
 
-    usuario = collection.find_one({'email': txtEmail.get().lower()})
     if usuario:
         exibirMsg('E-mail já cadastrado!')
     else:
-        # Cria um novo documento na coleção
-        collection.insert_one({
-            'nome': txtNome.get(),
-            'email': txtEmail.get().lower(),
-            'telefone': txtTelefone.get(),
-            'senha': txtSenha.get()
-        })
-        popup("Usuário cadastrado com sucesso!")
+        # Inserir um novo registro na tabela
+        sql = "INSERT INTO Funcionarios (nome, email, telefone, senha, imagem) VALUES (%s, %s, %s, %s, %s)"
+        values = (txtNome.get(), txtEmail.get().lower(), txtTelefone.get(), txtSenha.get(), imagem_bytes)
+        cursor.execute(sql, values)
+        mydb.commit()
+
+        id = cursor.lastrowid
+
+        popup("Usuário cadastrado com sucesso!", id)
+
+    # Fechar a conexão
+    cursor.close()
+    mydb.close()
 
 def limparCampos():
     # Limpar os campos
@@ -83,7 +93,7 @@ def exibirMsg(msg):
     lblMsg.configure(text=msg)
     lblMsg.grid(row=12, columnspan=2)
 
-def popup(msg):
+def popup(msg, id):
     # Cria uma nova janela (toplevel)
     popup = CTkToplevel(tela)
     popup.title("Mensagem")
@@ -100,17 +110,23 @@ def popup(msg):
 
     lblPopupTitle = CTkLabel(popup, text="Alerta!", font=("arial bold", 18)).pack(pady=(5,0))
     lblPopupMsg = CTkLabel(popup, text=msg, font=("arial", 16)).place(relx=0.5, rely=0.5, anchor=CENTER)
-    btnOk = CTkButton(popup, text="Ok", width=50, command=lambda: abrirPaginaInicial(popup))
+    btnOk = CTkButton(popup, text="Ok", width=50, command=lambda: abrirPaginaInicial(popup, id))
     btnOk.place(relx=1.0, rely=1.0, anchor='se', x=-10, y=-10)
 
     # Impede que o usuário interaja com a janela principal enquanto o popup estiver aberto
     popup.grab_set()
     popup.mainloop()
 
-def abrirPaginaInicial(popup):
+# Inserir imagem
+def selecionar_imagem():
+    filename = askopenfilename()
+    with open(filename, "rb") as file:
+        global imagem_bytes
+        imagem_bytes = file.read()
+def abrirPaginaInicial(popup, id):
     tela.withdraw()
     popup.withdraw()
-    subprocess.run(['python', 'pagina_inicial.py'])
+    subprocess.run(['python', 'pagina_inicial.py', str(id)])
     popup.destroy()
     tela.destroy()
 
@@ -185,6 +201,8 @@ txtEmail = CTkEntry(formFieldset, placeholder_text="Seu E-mail", width=200)
 lblTelefone = CTkLabel(formFieldset, text="Telefone", font=("arial bold", 16))
 txtTelefone = CTkEntry(formFieldset, placeholder_text="Telefone", width=200)
 
+btnSelecionarImagem = CTkButton(formFieldset, text="Selecionar Imagem", command=selecionar_imagem)
+
 lblSenha = CTkLabel(formFieldset, text="Senha", font=("arial bold", 16))
 varSenha = StringVar()
 txtSenha = CTkEntry(formFieldset, width=200, show="*", textvariable=varSenha)
@@ -219,7 +237,8 @@ lblSenha.grid(row=7, column=0, sticky=W)
 txtSenha.grid(row=8, column=0, padx=(0, 2), pady=5, sticky=W)
 lblConfirmarSenha.grid(row=7, column=1, sticky=W)
 txtConfirmarSenha.grid(row=8, column=1, padx=(2, 0), pady=5, sticky=W)
-btnCadastrar.grid(row=11, column=0, pady=10, sticky=W)
+btnSelecionarImagem.grid(row=10, column=0, pady=10, sticky=W)
+btnCadastrar.grid(row=12, column=0, pady=10, sticky=W)
 
 # Fim -------------------------------------------------------------------------------------------------------------------
 

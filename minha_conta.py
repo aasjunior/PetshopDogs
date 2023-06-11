@@ -16,11 +16,6 @@ from paleta_cores import *
 def sair():
     tela.destroy()
 
-def abrirPaginaInicial(id):
-    tela.withdraw()
-    subprocess.run(['python', 'minha_conta.py', str(id)])
-    tela.destroy()
-
 # Configuração de Tela --------------------------------------------------------------------------------------------------
 
 tela = CTk()
@@ -120,10 +115,33 @@ lblMinhaConta = CTkLabel(btnMinhaConta, text="Histórico de Consultas", font=("a
 
 # Main ---------------------------------------------------------------------------------------------------------------
 
-main = CTkFrame(tela, width=750, height=550, fg_color="#e9e9e9")
-txtSearch = CTkEntry(main, width=400, height=40, placeholder_text="Pesquisar")
-btnSearch = CTkButton(main, width=50, height=40, image=searchIcon, text="")
-bg_image = CTkLabel(main, image=banner_welcome, width=500, text="")
+formCadastro = CTkFrame(tela, corner_radius=20)
+formFieldset = CTkFrame(formCadastro, fg_color="transparent")
+
+legend = CTkLabel(formFieldset, text="Cadastro", font=("arial bold", 28))
+
+lblNome = CTkLabel(formFieldset, text="Nome Completo", font=("arial bold", 16))
+txtNome = CTkEntry(formFieldset, placeholder_text="Nome Completo", width=400)
+
+lblEmail = CTkLabel(formFieldset, text="Seu E-mail", font=("arial bold", 16))
+txtEmail = CTkEntry(formFieldset, placeholder_text="Seu E-mail", width=200)
+
+lblTelefone = CTkLabel(formFieldset, text="Telefone", font=("arial bold", 16))
+txtTelefone = CTkEntry(formFieldset, placeholder_text="Telefone", width=200)
+
+btnSelecionarImagem = CTkButton(formFieldset, text="Selecionar Imagem", command=selecionar_imagem)
+
+lblSenha = CTkLabel(formFieldset, text="Senha", font=("arial bold", 16))
+varSenha = StringVar()
+txtSenha = CTkEntry(formFieldset, width=200, show="*", textvariable=varSenha)
+
+lblConfirmarSenha = CTkLabel(formFieldset, text="Confirme a Senha", font=("arial bold", 16))
+varConfirmarSenha = StringVar()
+txtConfirmarSenha = CTkEntry(formFieldset, width=200, show="*", textvariable=varConfirmarSenha)
+
+btnCadastrar = CTkButton(formFieldset, text="Cadastrar", width=100, command=cadastrar)
+
+lblMsg = CTkLabel(formFieldset, text="", font=("ariel bold", 16))
 
 # Configurando os Widgets --------------------------------------------------------------------------------------------
 
@@ -140,9 +158,6 @@ btnRegisterPet.configure(cursor="hand2")
 btnServices.configure(cursor="hand2")
 btnEdit.configure(cursor="hand2")
 btnMinhaConta.configure(cursor="hand2")
-
-# Vincular o evento <Button-1> ao frame
-btnMinhaConta.bind("<Button-1>", lambda event: abrirPaginaInicial(id))
 
 # Gerenciadores
 
@@ -169,10 +184,21 @@ btnMinhaConta.place(x=5, y=160)
 iconMinhaConta.place(x=15, y=10)
 lblMinhaConta.place(x=50, y=15)
 
-main.place(x=250, y=50)
-txtSearch.place(x=20, y=20)
-btnSearch.place(x=420, y=20)
-bg_image.place(relx=0.5, rely=0.5, anchor=CENTER)
+formCadastro.pack(padx=100, pady=50, fill=BOTH, expand=TRUE)
+formFieldset.place(relx=0.5, rely=0.5, anchor=CENTER)
+legend.grid(row=0, column=0, pady=(0, 10), sticky=W)
+lblNome.grid(row=1, column=0, sticky=W)
+txtNome.grid(row=2, columnspan=2, padx=(0, 5), pady=5, sticky=W)
+lblEmail.grid(row=3, column=0, sticky=W)
+txtEmail.grid(row=4, column=0, padx=(0, 2), pady=5, sticky=W)
+lblTelefone.grid(row=3, column=1, sticky=W)
+txtTelefone.grid(row=4, column=1, padx=(2, 0), pady=5, sticky=W)
+lblSenha.grid(row=7, column=0, sticky=W)
+txtSenha.grid(row=8, column=0, padx=(0, 2), pady=5, sticky=W)
+lblConfirmarSenha.grid(row=7, column=1, sticky=W)
+txtConfirmarSenha.grid(row=8, column=1, padx=(2, 0), pady=5, sticky=W)
+btnSelecionarImagem.grid(row=10, column=0, pady=10, sticky=W)
+btnCadastrar.grid(row=12, column=0, pady=10, sticky=W)
 
 # Fim -------------------------------------------------------------------------------------------------------------------
 
