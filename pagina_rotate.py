@@ -46,8 +46,10 @@ def select_image():
     # show the initial image
     show_image(rotated_image)
 
-def rotate_image_handler():
-    global rotated_image
+def rotate_image_handler(photo):
+    image = cv2.imread(photo)
+    # rotate the image to the initial position
+    rotated_image = rotate_image(image, 0)
     angle = 45  # or any other desired angle
     rotated_image = rotate_image(rotated_image, angle)
     show_image(rotated_image)
@@ -117,10 +119,8 @@ if usuario:
 # Supondo que os dados da imagem estejam armazenados na variável 'imagem'
 img_data = io.BytesIO(imagem)
 img = Image.open(img_data)
-photo = ImageTk.PhotoImage(img)
-
-# Criar um rótulo para exibir a imagem
-label = CTkLabel(tela, image=photo)
+img_resized = img.resize((100, 100))
+photo = ImageTk.PhotoImage(img_resized)
 
 # Importando imagens -------------------------------------------------------------------------------------------------
 bg_welcome = Image.open("imgs/undraw_welcome_cats_thqn.png")
@@ -185,15 +185,17 @@ lblMinhaConta = CTkLabel(btnMinhaConta, text="Minha Conta", font=("arial bold", 
 main = CTkFrame(tela, width=750, height=550, fg_color="#e9e9e9")
 btnsImage = CTkFrame(main, width=300, height=50, fg_color="#e9e9e9")
 
-canvas = Canvas(tela, width=600, height=300)
+canvas = Canvas(main, width=600, height=300)
 image_canvas = canvas.create_image(0, 0, anchor=NW)
+canvas.itemconfigure(image_canvas, image=photo)
+canvas.image = photo
 
 # create the select image button
 select_image_button = CTkButton(btnsImage, text="Selecione a imagem", command=select_image)
 
 # create the rotate image button
-rotate_button = CTkButton(btnsImage, text="Rotacionar", command=rotate_image_handler)
 
+rotate_button = CTkButton(btnsImage, text="Rotacionar", command=lambda: rotate_image_handler(img))
 
 # Configurando os Widgets --------------------------------------------------------------------------------------------
 

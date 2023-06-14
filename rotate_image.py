@@ -6,7 +6,7 @@ from PIL import Image, ImageTk
 from customtkinter import CTkImage
 
 
-def rotate_image():
+def rotate_image(angle):
     # obter a altura e a largura da imagem
     height, width = image.shape[:2]
     # get the center point of the image
