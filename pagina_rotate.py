@@ -3,6 +3,7 @@
 from tkinter import *
 from customtkinter import *
 from PIL import Image, ImageTk
+from tkinter.filedialog import askopenfilename
 import mysql.connector
 import sys
 import io
@@ -12,6 +13,13 @@ import io
 from paleta_cores import *
 
 # Funções -------------------------------------------------------------------------------------------------------------
+from rotate_image import *
+
+def selecionar_imagem():
+    filename = askopenfilename()
+    with open(filename, "rb") as file:
+        global imagem_bytes
+        imagem_bytes = file.read()
 
 def sair():
     tela.destroy()
@@ -34,7 +42,9 @@ tela.resizable(False, False)
 tela._set_appearance_mode("dark")
 set_default_color_theme("green")
 
-id = sys.argv[1]
+# id = sys.argv[1]
+id = 1
+
 # Conectar ao banco de dados
 mydb = mysql.connector.connect(
     host="localhost",
@@ -70,6 +80,7 @@ edit = Image.open("imgs/edit.png")
 dog = Image.open("imgs/dog.png")
 calendar = Image.open("imgs/calendar.png")
 search = Image.open("imgs/search.png")
+rotate = Image.open("imgs/rotate.png")
 
 bg_welcome.thumbnail((500, 500))
 user.thumbnail((35, 30))
@@ -77,6 +88,7 @@ edit.thumbnail((35, 35))
 dog.thumbnail((35, 35))
 calendar.thumbnail((35, 35))
 search.thumbnail((35, 35))
+rotate.thumbnail((35, 35))
 
 banner_welcome = ImageTk.PhotoImage(bg_welcome)
 userIcon = ImageTk.PhotoImage(user)
@@ -84,6 +96,7 @@ editIcon = ImageTk.PhotoImage(edit)
 dogIcon = ImageTk.PhotoImage(dog)
 calendarIcon = ImageTk.PhotoImage(calendar)
 searchIcon = ImageTk.PhotoImage(search)
+rotateIcon = ImageTk.PhotoImage(rotate)
 
 # Header -------------------------------------------------------------------------------------------------------------
 
@@ -109,39 +122,29 @@ btnEdit = CTkFrame(sidebar, width=240, height=50)
 iconEdit = CTkLabel(btnEdit, image=editIcon, text="edit")
 lblEdit = CTkLabel(btnEdit, text="Histórico de Consultas", font=("arial bold", 16))
 
+btnRotateImagem = CTkFrame(sidebar, width=240, height=50)
+iconRotateImagem = CTkLabel(btnRotateImagem, image=rotateIcon, text="")
+lblRotateImagem = CTkLabel(btnRotateImagem, text="Rotação de Imagem", font=("arial bold", 16))
+
 btnMinhaConta = CTkFrame(sidebar, width=240, height=50)
-iconMinhaConta = CTkLabel(btnMinhaConta, image=userIcon, text="Minha Conta")
-lblMinhaConta = CTkLabel(btnMinhaConta, text="Histórico de Consultas", font=("arial bold", 16))
+iconMinhaConta = CTkLabel(btnMinhaConta, image=userIcon, text="")
+lblMinhaConta = CTkLabel(btnMinhaConta, text="Minha Conta", font=("arial bold", 16))
+
 
 # Main ---------------------------------------------------------------------------------------------------------------
 
-formCadastro = CTkFrame(tela, corner_radius=20)
-formFieldset = CTkFrame(formCadastro, fg_color="transparent")
+main = CTkFrame(tela, width=750, height=550, fg_color="#e9e9e9")
+btnsImage = CTkFrame(main, width=300, height=50, fg_color="#e9e9e9")
 
-legend = CTkLabel(formFieldset, text="Cadastro", font=("arial bold", 28))
+canvas = Canvas(main, width=600, height=300)
+image_canvas = canvas.create_image(0, 0, anchor=tk.NW, image=None)
 
-lblNome = CTkLabel(formFieldset, text="Nome Completo", font=("arial bold", 16))
-txtNome = CTkEntry(formFieldset, placeholder_text="Nome Completo", width=400)
+# create the select image button
+select_image_button = CTkButton(btnsImage, text="Selecione a imagem", command=select_image)
 
-lblEmail = CTkLabel(formFieldset, text="Seu E-mail", font=("arial bold", 16))
-txtEmail = CTkEntry(formFieldset, placeholder_text="Seu E-mail", width=200)
+# create the rotate image button
+rotate_button = CTkButton(btnsImage, text="Rotacionar", command=rotate_image_handler)
 
-lblTelefone = CTkLabel(formFieldset, text="Telefone", font=("arial bold", 16))
-txtTelefone = CTkEntry(formFieldset, placeholder_text="Telefone", width=200)
-
-btnSelecionarImagem = CTkButton(formFieldset, text="Selecionar Imagem", command=selecionar_imagem)
-
-lblSenha = CTkLabel(formFieldset, text="Senha", font=("arial bold", 16))
-varSenha = StringVar()
-txtSenha = CTkEntry(formFieldset, width=200, show="*", textvariable=varSenha)
-
-lblConfirmarSenha = CTkLabel(formFieldset, text="Confirme a Senha", font=("arial bold", 16))
-varConfirmarSenha = StringVar()
-txtConfirmarSenha = CTkEntry(formFieldset, width=200, show="*", textvariable=varConfirmarSenha)
-
-btnCadastrar = CTkButton(formFieldset, text="Cadastrar", width=100, command=cadastrar)
-
-lblMsg = CTkLabel(formFieldset, text="", font=("ariel bold", 16))
 
 # Configurando os Widgets --------------------------------------------------------------------------------------------
 
@@ -180,25 +183,19 @@ btnEdit.place(x=5, y=115)
 iconEdit.place(x=15, y=10)
 lblEdit.place(x=50, y=15)
 
-btnMinhaConta.place(x=5, y=160)
+btnRotateImagem.place(x=5, y=170)
+iconRotateImagem.place(x=15, y=10)
+lblRotateImagem.place(x=50, y=15)
+
+btnMinhaConta.place(x=5, y=225)
 iconMinhaConta.place(x=15, y=10)
 lblMinhaConta.place(x=50, y=15)
 
-formCadastro.pack(padx=100, pady=50, fill=BOTH, expand=TRUE)
-formFieldset.place(relx=0.5, rely=0.5, anchor=CENTER)
-legend.grid(row=0, column=0, pady=(0, 10), sticky=W)
-lblNome.grid(row=1, column=0, sticky=W)
-txtNome.grid(row=2, columnspan=2, padx=(0, 5), pady=5, sticky=W)
-lblEmail.grid(row=3, column=0, sticky=W)
-txtEmail.grid(row=4, column=0, padx=(0, 2), pady=5, sticky=W)
-lblTelefone.grid(row=3, column=1, sticky=W)
-txtTelefone.grid(row=4, column=1, padx=(2, 0), pady=5, sticky=W)
-lblSenha.grid(row=7, column=0, sticky=W)
-txtSenha.grid(row=8, column=0, padx=(0, 2), pady=5, sticky=W)
-lblConfirmarSenha.grid(row=7, column=1, sticky=W)
-txtConfirmarSenha.grid(row=8, column=1, padx=(2, 0), pady=5, sticky=W)
-btnSelecionarImagem.grid(row=10, column=0, pady=10, sticky=W)
-btnCadastrar.grid(row=12, column=0, pady=10, sticky=W)
+main.place(x=250, y=50)
+canvas.place(relx=0.5, rely=0.5, anchor=CENTER)
+btnsImage.place(relx=0.5, y=420, anchor=CENTER)
+select_image_button.place(x=0, y=0)
+rotate_button.place(x=150, y=0)
 
 # Fim -------------------------------------------------------------------------------------------------------------------
 

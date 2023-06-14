@@ -123,6 +123,7 @@ def selecionar_imagem():
     with open(filename, "rb") as file:
         global imagem_bytes
         imagem_bytes = file.read()
+        
 def abrirPaginaInicial(popup, id):
     tela.withdraw()
     popup.withdraw()

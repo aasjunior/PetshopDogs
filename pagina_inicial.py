@@ -4,6 +4,7 @@ from tkinter import *
 from customtkinter import *
 from PIL import Image, ImageTk
 import mysql.connector
+import subprocess
 import sys
 import io
 
@@ -16,9 +17,9 @@ from paleta_cores import *
 def sair():
     tela.destroy()
 
-def abrirPaginaInicial(id):
+def abrirPagina(page, id):
     tela.withdraw()
-    subprocess.run(['python', 'minha_conta.py', str(id)])
+    subprocess.run(['python', page, str(id)])
     tela.destroy()
 
 # Configuração de Tela --------------------------------------------------------------------------------------------------
@@ -39,7 +40,7 @@ tela.resizable(False, False)
 tela._set_appearance_mode("dark")
 set_default_color_theme("green")
 
-id = sys.argv[1]
+id =1
 # Conectar ao banco de dados
 mydb = mysql.connector.connect(
     host="localhost",
@@ -75,6 +76,7 @@ edit = Image.open("imgs/edit.png")
 dog = Image.open("imgs/dog.png")
 calendar = Image.open("imgs/calendar.png")
 search = Image.open("imgs/search.png")
+rotate = Image.open("imgs/rotate.png")
 
 bg_welcome.thumbnail((500, 500))
 user.thumbnail((35, 30))
@@ -82,6 +84,7 @@ edit.thumbnail((35, 35))
 dog.thumbnail((35, 35))
 calendar.thumbnail((35, 35))
 search.thumbnail((35, 35))
+rotate.thumbnail((35, 35))
 
 banner_welcome = ImageTk.PhotoImage(bg_welcome)
 userIcon = ImageTk.PhotoImage(user)
@@ -89,6 +92,7 @@ editIcon = ImageTk.PhotoImage(edit)
 dogIcon = ImageTk.PhotoImage(dog)
 calendarIcon = ImageTk.PhotoImage(calendar)
 searchIcon = ImageTk.PhotoImage(search)
+rotateIcon = ImageTk.PhotoImage(rotate)
 
 # Header -------------------------------------------------------------------------------------------------------------
 
@@ -115,8 +119,12 @@ iconEdit = CTkLabel(btnEdit, image=editIcon, text="edit")
 lblEdit = CTkLabel(btnEdit, text="Histórico de Consultas", font=("arial bold", 16))
 
 btnMinhaConta = CTkFrame(sidebar, width=240, height=50)
-iconMinhaConta = CTkLabel(btnMinhaConta, image=userIcon, text="Minha Conta")
-lblMinhaConta = CTkLabel(btnMinhaConta, text="Histórico de Consultas", font=("arial bold", 16))
+iconMinhaConta = CTkLabel(btnMinhaConta, image=userIcon, text="")
+lblMinhaConta = CTkLabel(btnMinhaConta, text="Minha Conta", font=("arial bold", 16))
+
+btnRotateImagem = CTkFrame(sidebar, width=240, height=50)
+iconRotateImagem = CTkLabel(btnRotateImagem, image=rotateIcon, text="")
+lblRotateImagem = CTkLabel(btnRotateImagem, text="Rotação de Imagem", font=("arial bold", 16))
 
 # Main ---------------------------------------------------------------------------------------------------------------
 
@@ -139,10 +147,13 @@ btnSair.configure(cursor="hand2")
 btnRegisterPet.configure(cursor="hand2")
 btnServices.configure(cursor="hand2")
 btnEdit.configure(cursor="hand2")
+btnRotateImagem.configure(cursor="hand2")
 btnMinhaConta.configure(cursor="hand2")
 
 # Vincular o evento <Button-1> ao frame
-btnMinhaConta.bind("<Button-1>", lambda event: abrirPaginaInicial(id))
+btnMinhaConta.bind("<Button-1>", lambda event: abrirPagina('minha_conta.py',id))
+btnRotateImagem.bind("<Button-1>", lambda event: abrirPagina('pagina_rotate.py',id))
+
 
 # Gerenciadores
 
@@ -165,7 +176,11 @@ btnEdit.place(x=5, y=115)
 iconEdit.place(x=15, y=10)
 lblEdit.place(x=50, y=15)
 
-btnMinhaConta.place(x=5, y=160)
+btnRotateImagem.place(x=5, y=170)
+iconRotateImagem.place(x=15, y=10)
+lblRotateImagem.place(x=50, y=15)
+
+btnMinhaConta.place(x=5, y=225)
 iconMinhaConta.place(x=15, y=10)
 lblMinhaConta.place(x=50, y=15)
 
