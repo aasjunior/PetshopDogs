@@ -47,9 +47,14 @@ def select_image():
     show_image(rotated_image)
 
 def rotate_image_handler(photo):
-    image = cv2.imread(photo)
+    # Convert the Pillow image to a NumPy array
+    image_np = np.array(photo)
+
+    # Convert the image from RGB to BGR (OpenCV uses BGR instead of RGB)
+    image_np = cv2.cvtColor(image_np, cv2.COLOR_RGB2BGR)
     # rotate the image to the initial position
-    rotated_image = rotate_image(image, 0)
+    
+    rotated_image = rotate_image(image_np, 0)
     angle = 45  # or any other desired angle
     rotated_image = rotate_image(rotated_image, angle)
     show_image(rotated_image)
@@ -195,7 +200,7 @@ select_image_button = CTkButton(btnsImage, text="Selecione a imagem", command=se
 
 # create the rotate image button
 
-rotate_button = CTkButton(btnsImage, text="Rotacionar", command=lambda: rotate_image_handler(img))
+rotate_button = CTkButton(btnsImage, text="Rotacionar", command=lambda: rotate_image_handler(photo))
 
 # Configurando os Widgets --------------------------------------------------------------------------------------------
 
