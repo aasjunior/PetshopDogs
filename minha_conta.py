@@ -2,6 +2,7 @@ from tkinter import *
 from customtkinter import *
 from PIL import Image, ImageTk
 from tkinter.filedialog import askopenfilename
+import tkinter.messagebox as MessageBox
 import mysql.connector
 import sys
 import io
@@ -87,6 +88,10 @@ def update_user(id, nome, email, telefone):
     values = (nome, email, telefone, id)
     cursor.execute(query, values)
     mydb.commit()
+    MessageBox.showinfo("Status", "Atualizado com sucesso!")
+
+    mydb.close()
+
 
 def sair():
     tela.destroy()
@@ -250,6 +255,7 @@ btnSair.configure(cursor="hand2")
 btnRegisterPet.configure(cursor="hand2")
 btnServices.configure(cursor="hand2")
 btnEdit.configure(cursor="hand2")
+btnRotateImagem.configure(cursor="hand2")
 btnMinhaConta.configure(cursor="hand2")
 
 # Gerenciadores
@@ -293,10 +299,6 @@ lblEmail.grid(row=4, column=0, sticky=W)
 txtEmail.grid(row=5, column=0, padx=(0, 2), pady=5, sticky=W)
 lblTelefone.grid(row=4, column=1, sticky=W)
 txtTelefone.grid(row=5, column=1, padx=(2, 0), pady=5, sticky=W)
-lblSenha.grid(row=8, column=0, sticky=W)
-txtSenha.grid(row=9, column=0, padx=(0, 2), pady=5, sticky=W)
-lblConfirmarSenha.grid(row=8, column=1, sticky=W)
-txtConfirmarSenha.grid(row=9, column=1, padx=(2, 0), pady=5, sticky=W)
 btnSelecionarImagem.grid(row=11, column=0, pady=10, sticky=W)
 btnSalvar.grid(row=13, column=0, pady=10, sticky=W)
 
