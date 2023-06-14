@@ -140,10 +140,10 @@ canvas = Canvas(main, width=600, height=300)
 image_canvas = canvas.create_image(0, 0, anchor=tk.NW, image=None)
 
 # create the select image button
-select_image_button = CTkButton(btnsImage, text="Selecione a imagem", command=select_image)
+select_image_button = CTkButton(btnsImage, text="Selecione a imagem", command=lambda: select_image(canvas, image_canvas))
 
 # create the rotate image button
-rotate_button = CTkButton(btnsImage, text="Rotacionar", command=rotate_image_handler)
+rotate_button = CTkButton(btnsImage, text="Rotacionar", command=lambda: rotate_image_handler(canvas, image_canvas))
 
 
 # Configurando os Widgets --------------------------------------------------------------------------------------------
@@ -193,7 +193,7 @@ lblMinhaConta.place(x=50, y=15)
 
 main.place(x=250, y=50)
 canvas.place(relx=0.5, rely=0.5, anchor=CENTER)
-btnsImage.place(relx=0.5, y=420, anchor=CENTER)
+btnsImage.place(relx=0.5, y=450, anchor=CENTER)
 select_image_button.place(x=0, y=0)
 rotate_button.place(x=150, y=0)
 

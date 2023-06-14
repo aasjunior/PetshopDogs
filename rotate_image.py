@@ -3,6 +3,8 @@ import numpy as np
 import tkinter as tk
 from tkinter import filedialog
 from PIL import Image, ImageTk
+from customtkinter import CTkImage
+
 
 def rotate_image(image, angle):
     # obter a altura e a largura da imagem
@@ -43,6 +45,6 @@ def rotate_image_handler(canvas, image_canvas):
 def show_image(image, canvas, image_canvas):
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
     image_pil = Image.fromarray(image)
-    image_tk = ImageTk.PhotoImage(image_pil)
+    image_tk = CTkImage(image_pil)
     canvas.itemconfigure(image_canvas, image=image_tk)
     canvas.image = image_tk
