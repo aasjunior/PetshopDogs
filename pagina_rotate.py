@@ -158,8 +158,16 @@ lblMinhaConta = CTkLabel(btnMinhaConta, text="Minha Conta", font=("arial bold", 
 main = CTkFrame(tela, width=750, height=550, fg_color="#e9e9e9")
 btnsImage = CTkFrame(main, width=300, height=50, fg_color="#e9e9e9")
 
-canvas = Canvas(main, width=600, height=300)
-image_canvas = canvas.create_image(0, 0, anchor=NW)
+canvas_width = 600
+canvas_height = 300
+canvas = Canvas(main, width=canvas_width, height=canvas_height)
+canvas.pack()
+
+# Calculate the coordinates for centering the image
+center_x = canvas_width // 2
+center_y = canvas_height // 2
+
+image_canvas = canvas.create_image(center_x, center_y, anchor="center")
 canvas.itemconfigure(image_canvas, image=photo)
 canvas.image = photo
 
