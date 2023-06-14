@@ -6,7 +6,7 @@ from PIL import Image, ImageTk
 from customtkinter import CTkImage
 
 
-def rotate_image(image, angle):
+def rotate_image():
     # obter a altura e a largura da imagem
     height, width = image.shape[:2]
     # get the center point of the image
@@ -23,7 +23,7 @@ def rotate_image(image, angle):
     translated_image = cv2.warpAffine(rotated_image, translation_matrix, (width, height), borderValue=(255, 255, 255))
     return translated_image
 
-def select_image(canvas, image_canvas):
+def select_image():
     global image_path
     global image
     global rotated_image
@@ -34,15 +34,15 @@ def select_image(canvas, image_canvas):
     # rotate the image to the initial position
     rotated_image = rotate_image(image, 0)
     # show the initial image
-    show_image(rotated_image, canvas, image_canvas)
+    show_image(rotated_image)
 
-def rotate_image_handler(canvas, image_canvas):
+def rotate_image_handler():
     global rotated_image
     angle = 45 # or any other desired angle
     rotated_image = rotate_image(rotated_image, angle)
-    show_image(rotated_image, canvas, image_canvas)
+    show_image(rotated_image)
 
-def show_image(image, canvas, image_canvas):
+def show_image(image):
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
     image_pil = Image.fromarray(image)
     image_tk = CTkImage(image_pil)
