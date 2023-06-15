@@ -21,10 +21,16 @@ import os
 def selecionar_imagem():
     filename = askopenfilename()
     with open(filename, "rb") as file:
-        global imagem_bytes
-        imagem_bytes = file.read()
+        global imagem
+        imagem = file.read()
+    img_data = io.BytesIO(imagem)
+    img = Image.open(img_data)
+    img_resized = img.resize((40, 40))
+    global photo
+    photo = ImageTk.PhotoImage(img_resized)
+    labelPhoto.configure(image=photo)
 
-def update_user(id, nome, email, telefone):
+def update_user(id, nome, email, telefone, imagem):
     # Conectar ao banco de dados
     mydb = mysql.connector.connect(
         host="localhost",
@@ -37,8 +43,8 @@ def update_user(id, nome, email, telefone):
     cursor = mydb.cursor()
 
     # Atualizar os dados do usuário com base em seu ID
-    query = "UPDATE Funcionarios SET nome = %s, email = %s, telefone = %s WHERE id = %s"
-    values = (nome, email, telefone, id)
+    query = "UPDATE Funcionarios SET nome = %s, email = %s, telefone = %s, imagem = %s WHERE id = %s"
+    values = (nome, email, telefone, imagem, id)
     cursor.execute(query, values)
     mydb.commit()
     MessageBox.showinfo("Status", "Atualizado com sucesso!")
@@ -136,8 +142,6 @@ btnEdit = CTkButton(sidebar, width=220, height=50, text="Histórico de Consultas
 btnRotateImagem = CTkButton(sidebar, width=220, height=50, text="Rotação de Imagem", font=("arial bold", 16), anchor=W, image=rotateIcon, command=lambda: abrirPagina('pagina_rotate.py',id))
 btnMinhaConta = CTkButton(sidebar, width=220, height=50, text="Minha Conta", font=("arial bold", 16), anchor=W, image=userIcon)
 
-
-
 # Main ---------------------------------------------------------------------------------------------------------------
 
 main = CTkFrame(tela, width=770, height=550, fg_color="#e9e9e9")
@@ -165,7 +169,7 @@ lblConfirmarSenha = CTkLabel(formFieldset, text="Confirme a Senha", font=("arial
 varConfirmarSenha = StringVar()
 txtConfirmarSenha = CTkEntry(formFieldset, width=200, show="*", textvariable=varConfirmarSenha)
 
-btnSalvar = CTkButton(formFieldset, text="Salvar", width=100, command=lambda: update_user(1, txtNome.get(), txtEmail.get(), txtTelefone.get()))
+btnSalvar = CTkButton(formFieldset, text="Salvar", width=100, command=lambda: update_user(1, txtNome.get(), txtEmail.get(), txtTelefone.get(), imagem))
 
 lblMsg = CTkLabel(formFieldset, text="", font=("ariel bold", 16))
 

@@ -1,10 +1,11 @@
 from tkinter import *
 from tkinter.filedialog import askopenfilename
+from PIL import Image, ImageTk
 from customtkinter import *
 import mysql.connector
 import subprocess
 from re import search
-
+import io
 
 # Paleta de Cores -------------------------------------------------------------------------------------------------------
 
@@ -66,7 +67,7 @@ def conn():
     else:
         # Inserir um novo registro na tabela
         sql = "INSERT INTO Funcionarios (nome, email, telefone, senha, imagem) VALUES (%s, %s, %s, %s, %s)"
-        values = (txtNome.get(), txtEmail.get().lower(), txtTelefone.get(), txtSenha.get(), imagem_bytes)
+        values = (txtNome.get(), txtEmail.get().lower(), txtTelefone.get(), txtSenha.get(), imagem)
         cursor.execute(sql, values)
         mydb.commit()
 
@@ -121,8 +122,14 @@ def popup(msg, id):
 def selecionar_imagem():
     filename = askopenfilename()
     with open(filename, "rb") as file:
-        global imagem_bytes
-        imagem_bytes = file.read()
+        global imagem
+        imagem = file.read()
+    img_data = io.BytesIO(imagem)
+    img = Image.open(img_data)
+    img_resized = img.resize((50, 50))
+    global photo
+    photo = ImageTk.PhotoImage(img_resized)
+    labelPhoto.configure(image=photo)
         
 def abrirPaginaInicial(popup, id):
     tela.withdraw()
@@ -187,11 +194,17 @@ tela._set_appearance_mode("dark")
 set_default_color_theme("green")
 
 # Formulário -----------------------------------------------------------------------------------------------------------
+user = Image.open("imgs/user.png")
+user.thumbnail((35, 30))
+userIcon = ImageTk.PhotoImage(user)
 
-formCadastro = CTkFrame(tela, corner_radius=20)
+formCadastro = CTkFrame(tela, corner_radius=20, width=600, height=450)
 formFieldset = CTkFrame(formCadastro, fg_color="transparent")
 
 legend = CTkLabel(formFieldset, text="Cadastro", font=("arial bold", 28))
+
+fotoUser = CTkFrame(formFieldset, width=45, height=45, border_color='e9e9e9')
+labelPhoto = CTkLabel(fotoUser, image=userIcon, text="")
 
 lblNome = CTkLabel(formFieldset, text="Nome Completo", font=("arial bold", 16))
 txtNome = CTkEntry(formFieldset, placeholder_text="Nome Completo", width=400)
@@ -225,20 +238,22 @@ varConfirmarSenha.trace('w', confirmarSenha)
 
 # Gerenciadores
 
-formCadastro.pack(padx=100, pady=50, fill=BOTH, expand=TRUE)
+formCadastro.place(relx=0.5, rely=0.5, anchor=CENTER)
 formFieldset.place(relx=0.5, rely=0.5, anchor=CENTER)
 legend.grid(row=0, column=0, pady=(0, 10), sticky=W)
-lblNome.grid(row=1, column=0, sticky=W)
-txtNome.grid(row=2, columnspan=2, padx=(0, 5), pady=5, sticky=W)
-lblEmail.grid(row=3, column=0, sticky=W)
-txtEmail.grid(row=4, column=0, padx=(0, 2), pady=5, sticky=W)
-lblTelefone.grid(row=3, column=1, sticky=W)
-txtTelefone.grid(row=4, column=1, padx=(2, 0), pady=5, sticky=W)
-lblSenha.grid(row=7, column=0, sticky=W)
-txtSenha.grid(row=8, column=0, padx=(0, 2), pady=5, sticky=W)
-lblConfirmarSenha.grid(row=7, column=1, sticky=W)
-txtConfirmarSenha.grid(row=8, column=1, padx=(2, 0), pady=5, sticky=W)
-btnSelecionarImagem.grid(row=10, column=0, pady=10, sticky=W)
+fotoUser.grid(row=1, column=0, sticky=W)
+labelPhoto.place(relx=0.5, rely=0.5, anchor=CENTER)
+lblNome.grid(row=2, column=0, sticky=W)
+txtNome.grid(row=3, columnspan=2, padx=(0, 5), pady=5, sticky=W)
+lblEmail.grid(row=4, column=0, sticky=W)
+txtEmail.grid(row=5, column=0, padx=(0, 2), pady=5, sticky=W)
+lblTelefone.grid(row=4, column=1, sticky=W)
+txtTelefone.grid(row=5, column=1, padx=(2, 0), pady=5, sticky=W)
+lblSenha.grid(row=8, column=0, sticky=W)
+txtSenha.grid(row=9, column=0, padx=(0, 2), pady=5, sticky=W)
+lblConfirmarSenha.grid(row=8, column=1, sticky=W)
+txtConfirmarSenha.grid(row=9, column=1, padx=(2, 0), pady=5, sticky=W)
+btnSelecionarImagem.grid(row=11, column=0, pady=10, sticky=W)
 btnCadastrar.grid(row=12, column=0, pady=10, sticky=W)
 
 # Fim -------------------------------------------------------------------------------------------------------------------
