@@ -104,31 +104,18 @@ btnSair = CTkLabel(header, text="Sair", font=("arial bold", 16))
 
 # Sidebar ------------------------------------------------------------------------------------------------------------
 
-sidebar = CTkFrame(tela, width=250, height=550)
+sidebar = CTkFrame(tela, width=230, height=550)
 
-btnRegisterPet = CTkFrame(sidebar, width=240, height=50)
-iconRegisterPet = CTkLabel(btnRegisterPet, image=dogIcon, text="")
-lblRegisterPet = CTkLabel(btnRegisterPet, text="Consultar Pet's", font=("arial bold", 16))
+btnRegisterPet = CTkButton(sidebar, width=220, height=50, text="Consultar Pet's", font=("arial bold", 16), anchor=W, image=dogIcon)
+btnServices = CTkButton(sidebar, width=220, height=50, text="Agendar Serviços", font=("arial bold", 16), anchor=W, image=calendarIcon)
+btnEdit = CTkButton(sidebar, width=220, height=50, text="Histórico de Consultas", font=("arial bold", 16), anchor=W, image=editIcon)
+btnRotateImagem = CTkButton(sidebar, width=220, height=50, text="Rotação de Imagem", font=("arial bold", 16), anchor=W, image=rotateIcon, command=lambda: abrirPagina('pagina_rotate.py',id))
+btnMinhaConta = CTkButton(sidebar, width=220, height=50, text="Minha Conta", font=("arial bold", 16), anchor=W, image=userIcon, command=lambda: abrirPagina('minha_conta.py',id))
 
-btnServices = CTkFrame(sidebar, width=240, height=50)
-iconServices = CTkLabel(btnServices, image=calendarIcon, text="")
-lblServices = CTkLabel(btnServices, text="Agendar Serviços", font=("arial bold", 16))
-
-btnEdit = CTkFrame(sidebar, width=240, height=50)
-iconEdit = CTkLabel(btnEdit, image=editIcon, text="edit")
-lblEdit = CTkLabel(btnEdit, text="Histórico de Consultas", font=("arial bold", 16))
-
-btnMinhaConta = CTkFrame(sidebar, width=240, height=50)
-iconMinhaConta = CTkLabel(btnMinhaConta, image=userIcon, text="")
-lblMinhaConta = CTkLabel(btnMinhaConta, text="Minha Conta", font=("arial bold", 16))
-
-btnRotateImagem = CTkFrame(sidebar, width=240, height=50)
-iconRotateImagem = CTkLabel(btnRotateImagem, image=rotateIcon, text="")
-lblRotateImagem = CTkLabel(btnRotateImagem, text="Rotação de Imagem", font=("arial bold", 16))
 
 # Main ---------------------------------------------------------------------------------------------------------------
 
-main = CTkFrame(tela, width=750, height=550, fg_color="#e9e9e9")
+main = CTkFrame(tela, width=770, height=550, fg_color="#e9e9e9")
 txtSearch = CTkEntry(main, width=400, height=40, placeholder_text="Pesquisar")
 btnSearch = CTkButton(main, width=50, height=40, image=searchIcon, text="")
 bg_image = CTkLabel(main, image=banner_welcome, width=500, text="")
@@ -136,10 +123,7 @@ bg_image = CTkLabel(main, image=banner_welcome, width=500, text="")
 # Configurando os Widgets --------------------------------------------------------------------------------------------
 
 # Evento click
-
 btnSair.bind("<Button-1>", lambda event: sair())
-btnRotateImagem.bind("<Button-1>", lambda event: abrirPagina('pagina_rotate.py',id))
-btnMinhaConta.bind("<Button-1>", lambda event: abrirPagina('minha_conta.py',id))
 
 # Cursor Pointer
 
@@ -154,7 +138,8 @@ btnRotateImagem.configure(cursor="hand2")
 btnMinhaConta.configure(cursor="hand2")
 
 # Vincular o evento <Button-1> ao frame
-
+btnRotateImagem.bind("<Button-1>", lambda event: abrirPagina('pagina_rotate.py',id))
+btnMinhaConta.bind("<Button-1>", lambda event: abrirPagina('minha_conta.py',id))
 
 
 # Gerenciadores
@@ -167,26 +152,12 @@ btnSair.place(x=940, y=10)
 sidebar.place(x=0, y=50)
 
 btnRegisterPet.place(x=5, y=5)
-iconRegisterPet.place(x=15, y=10)
-lblRegisterPet.place(x=50, y=15)
-
 btnServices.place(x=5, y=60)
-iconServices.place(x=15, y=10)
-lblServices.place(x=50, y=15)
-
 btnEdit.place(x=5, y=115)
-iconEdit.place(x=15, y=10)
-lblEdit.place(x=50, y=15)
-
 btnRotateImagem.place(x=5, y=170)
-iconRotateImagem.place(x=15, y=10)
-lblRotateImagem.place(x=50, y=15)
-
 btnMinhaConta.place(x=5, y=225)
-iconMinhaConta.place(x=15, y=10)
-lblMinhaConta.place(x=50, y=15)
 
-main.place(x=250, y=50)
+main.place(x=230, y=50)
 txtSearch.place(x=20, y=20)
 btnSearch.place(x=420, y=20)
 bg_image.place(relx=0.5, rely=0.5, anchor=CENTER)
