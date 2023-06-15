@@ -138,9 +138,12 @@ bg_image = CTkLabel(main, image=banner_welcome, width=500, text="")
 # Evento click
 
 btnSair.bind("<Button-1>", lambda event: sair())
+btnRotateImagem.bind("<Button-1>", lambda event: abrirPagina('pagina_rotate.py',id))
+btnMinhaConta.bind("<Button-1>", lambda event: abrirPagina('minha_conta.py',id))
 
 # Cursor Pointer
 
+logo.configure(cursor="hand2")
 btnUser.configure(cursor="hand2")
 btnSair.configure(cursor="hand2")
 
@@ -151,8 +154,7 @@ btnRotateImagem.configure(cursor="hand2")
 btnMinhaConta.configure(cursor="hand2")
 
 # Vincular o evento <Button-1> ao frame
-btnMinhaConta.bind("<Button-1>", lambda event: abrirPagina('minha_conta.py',id))
-btnRotateImagem.bind("<Button-1>", lambda event: abrirPagina('pagina_rotate.py',id))
+
 
 
 # Gerenciadores

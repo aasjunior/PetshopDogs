@@ -187,6 +187,7 @@ rotate_button = CTkButton(btnsImage, text="Rotacionar", command=lambda: rotate_p
 
 btnSair.bind("<Button-1>", lambda event: sair())
 btnMinhaConta.bind("<Button-1>", lambda event: abrirPagina('minha_conta.py',id))
+logo.bind("<Button-1>", lambda event: abrirPagina('pagina_inicial.py',id))
 
 # Cursor Pointer
 
