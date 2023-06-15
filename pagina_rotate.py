@@ -3,6 +3,7 @@ from customtkinter import *
 from PIL import Image, ImageTk
 from tkinter.filedialog import askopenfilename
 import mysql.connector
+import subprocess
 import sys
 import io
 
@@ -15,10 +16,6 @@ from paleta_cores import *
 import cv2
 import numpy as np
 import os
-
-import cv2
-import numpy as np
-from PIL import Image, ImageTk
 
 angle = 0
 
@@ -46,6 +43,11 @@ def selecionar_imagem():
         imagem_bytes = file.read()
 
 def sair():
+    tela.destroy()
+
+def abrirPagina(page, id):
+    tela.withdraw()
+    subprocess.run(['python', page, str(id)])
     tela.destroy()
 
 # Configuração de Tela --------------------------------------------------------------------------------------------------
@@ -92,7 +94,7 @@ if usuario:
 # Supondo que os dados da imagem estejam armazenados na variável 'imagem'
 img_data = io.BytesIO(imagem)
 img = Image.open(img_data)
-img_resized = img.resize((100, 100))
+img_resized = img.resize((200, 200))
 photo = ImageTk.PhotoImage(img_resized)
 
 # Importando imagens -------------------------------------------------------------------------------------------------
@@ -156,6 +158,7 @@ lblMinhaConta = CTkLabel(btnMinhaConta, text="Minha Conta", font=("arial bold", 
 # Main ---------------------------------------------------------------------------------------------------------------
 
 main = CTkFrame(tela, width=750, height=550, fg_color="#e9e9e9")
+title = CTkLabel(main, text="Rotacionar a imagem", font=("arial bold", 24), text_color="#000000")
 btnsImage = CTkFrame(main, width=300, height=50, fg_color="#e9e9e9")
 
 canvas_width = 600
@@ -183,6 +186,7 @@ rotate_button = CTkButton(btnsImage, text="Rotacionar", command=lambda: rotate_p
 # Evento click
 
 btnSair.bind("<Button-1>", lambda event: sair())
+btnMinhaConta.bind("<Button-1>", lambda event: abrirPagina('minha_conta.py',id))
 
 # Cursor Pointer
 
@@ -192,6 +196,7 @@ btnSair.configure(cursor="hand2")
 btnRegisterPet.configure(cursor="hand2")
 btnServices.configure(cursor="hand2")
 btnEdit.configure(cursor="hand2")
+btnRotateImagem.configure(cursor="hand2")
 btnMinhaConta.configure(cursor="hand2")
 
 # Gerenciadores
@@ -224,8 +229,9 @@ iconMinhaConta.place(x=15, y=10)
 lblMinhaConta.place(x=50, y=15)
 
 main.place(x=250, y=50)
-canvas.place(relx=0.5, rely=0.5, anchor=CENTER)
-btnsImage.place(relx=0.5, y=450, anchor=CENTER)
+title.place(x=100, y=50)
+canvas.place(relx=0.5, y=300, anchor=CENTER)
+btnsImage.place(relx=0.5, y=400, anchor=CENTER)
 select_image_button.place(x=0, y=0)
 rotate_button.place(x=150, y=0)
 
